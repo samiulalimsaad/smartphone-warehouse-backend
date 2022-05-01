@@ -20,6 +20,14 @@ app.get("/inventories", async (req, res) => {
     });
 });
 
+app.get("/inventories/:id", async (req, res) => {
+    const inventory = await Inventory.findOne({ _id: req.params.id });
+    res.json({
+        inventory,
+        success: true,
+    });
+});
+
 app.listen(PORT, async () => {
     console.log(`server is running at http://localhost:${PORT}`);
     mongoose.connect(
