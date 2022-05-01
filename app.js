@@ -55,6 +55,15 @@ app.put("/inventories/:id", async (req, res) => {
     });
 });
 
+app.delete("/inventories/:id", async (req, res) => {
+    const inventory = await Inventory.findByIdAndDelete(req.params.id);
+    res.json({
+        inventory,
+        success: true,
+        message: "successfully deleted",
+    });
+});
+
 app.listen(PORT, async () => {
     console.log(`server is running at http://localhost:${PORT}`);
     mongoose.connect(
