@@ -38,6 +38,23 @@ app.post("/inventories", async (req, res) => {
     });
 });
 
+app.put("/inventories/:id", async (req, res) => {
+    const inventory = await Inventory.findByIdAndUpdate(
+        req.params.id,
+        {
+            quantity: req.body.quantity,
+        },
+        {
+            new: true,
+        }
+    );
+    res.json({
+        inventory,
+        success: true,
+        message: "successfully updated",
+    });
+});
+
 app.listen(PORT, async () => {
     console.log(`server is running at http://localhost:${PORT}`);
     mongoose.connect(
