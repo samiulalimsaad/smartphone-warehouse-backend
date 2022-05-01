@@ -28,6 +28,16 @@ app.get("/inventories/:id", async (req, res) => {
     });
 });
 
+app.post("/inventories", async (req, res) => {
+    const inventoryData = new Inventory(req.body);
+    const inventory = await inventoryData.save();
+    res.json({
+        inventory,
+        success: true,
+        message: "successfully added",
+    });
+});
+
 app.listen(PORT, async () => {
     console.log(`server is running at http://localhost:${PORT}`);
     mongoose.connect(
