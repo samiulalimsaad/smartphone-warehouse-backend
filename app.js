@@ -104,7 +104,7 @@ app.delete("/inventories/:id", async (req, res) => {
     });
 });
 
-app.post("/login", verifyUser, async (req, res) => {
+app.post("/login", async (req, res) => {
     const token = jwt.sign(req.body, process.env.ACCESS_TOKEN, {
         expiresIn: "1d",
     });
