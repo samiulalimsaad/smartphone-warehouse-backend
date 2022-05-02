@@ -1,9 +1,9 @@
 import cors from "cors";
 import "dotenv/config";
 import express from "express";
+import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import { Inventory } from "./Model/inventory.js";
-
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -11,9 +11,45 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+const verifyUser = (req, res, next) => {
+    const email = req.headers.authorization;
+    if (!email) {
+        return res.status(401).json({
+            success: false,
+            message: "unauthorized access",
+        });
+    }
+    const token = authHeader.split(" ")[1];
+    jwt.verify(token, process.env.ACCESS_TOKEN, (err, decoded) => {
+        if (err) {
+            return res.status(403).json({
+                success: false,
+                message: "Forbidden access",
+            });
+        }
+        req.email = decoded?.email;
+        next();
+    });
+};
 
 app.get("/", (req, res) => {
     res.json({ hello: "hello" });
+});
+
+app.get("/my-inventories", async (req, res) => {
+    const email = req.query.email || "";
+
+    if (req.email === email) {
+        const inventory = await Inventory.find({ email });
+        res.json({
+            inventory,
+            success: true,
+        });
+    }
+    res.status(403).json({
+        success: false,
+        message: "Forbidden access",
+    });
 });
 
 app.get("/inventories", async (req, res) => {
@@ -65,6 +101,16 @@ app.delete("/inventories/:id", async (req, res) => {
         inventory,
         success: true,
         message: "successfully deleted",
+    });
+});
+
+app.post("/login", verifyUser, async (req, res) => {
+    const token = jwt.sign(req.body, process.env.ACCESS_TOKEN, {
+        expiresIn: "1d",
+    });
+    res.json({
+        token,
+        success: true,
     });
 });
 

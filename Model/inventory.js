@@ -7,6 +7,7 @@ const inventorySchema = new Schema(
         quantity: Number,
         price: Number,
         supplierName: String,
+        email: String,
         description: [String],
         brandName: String,
     },
