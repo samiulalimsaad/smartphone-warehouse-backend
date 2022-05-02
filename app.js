@@ -108,8 +108,6 @@ app.post("/login", async (req, res) => {
     const token = jwt.sign(req.body, process.env.ACCESS_TOKEN, {
         expiresIn: "1d",
     });
-    res.set("Access-Control-Allow-Origin", "*");
-
     res.json({
         token,
         success: true,
