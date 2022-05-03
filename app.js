@@ -14,16 +14,16 @@ app.use(cors());
 
 app.use(express.json());
 
-const verifyUser = (req, res, next) => {
-    const email = req.headers.authorization;
-    if (!email) {
+const verifyUser = async (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
         return res.status(401).json({
             success: false,
             message: "unauthorized access",
         });
     }
     const token = authHeader.split(" ")[1];
-    jwt.verify(token, process.env.ACCESS_TOKEN, (err, decoded) => {
+    await jwt.verify(token, process.env.ACCESS_TOKEN, (err, decoded) => {
         if (err) {
             return res.status(403).json({
                 success: false,
@@ -39,12 +39,12 @@ app.get("/", (req, res) => {
     res.json({ hello: "hello" });
 });
 
-app.get("/my-inventories", async (req, res) => {
-    const email = req.query.email || "";
+app.get("/my-inventories", verifyUser, async (req, res) => {
+    const email = (await req.query.email) || "";
 
     if (req.email === email) {
         const inventory = await Inventory.find({ email });
-        res.json({
+        return res.json({
             inventory,
             success: true,
         });
