@@ -56,8 +56,14 @@ app.get("/my-inventories", verifyUser, async (req, res) => {
 });
 
 app.get("/inventories", async (req, res) => {
-    const inventory = await Inventory.find({});
+    const limit = +req.query.limit;
+    const page = +req.query.page || 0;
+    const skip = limit * page;
+    let inventory = await Inventory.find({});
+    const total = Math.floor(inventory.length / limit);
+    inventory = inventory.slice(skip, skip + limit);
     res.json({
+        total,
         inventory,
         success: true,
     });
