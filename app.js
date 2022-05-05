@@ -3,7 +3,7 @@ import "dotenv/config";
 import express from "express";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
-import { Inventory } from "./Model/inventory.js";
+import { Inventory } from "./Model/inventory.model.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -58,9 +58,9 @@ app.get("/my-inventories", verifyUser, async (req, res) => {
 app.get("/inventories", async (req, res) => {
     const limit = +req.query.limit || 15;
     const page = +req.query.page || 0;
-    const skip = limit * page;
+    const skip = limit * (page - 1);
     let inventory = await Inventory.find({});
-    const total = Math.floor(inventory.length / limit);
+    const total = Math.ceil(inventory.length / limit);
     inventory = inventory.slice(skip, skip + limit);
     res.json({
         total,
