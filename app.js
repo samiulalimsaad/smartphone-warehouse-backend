@@ -36,7 +36,7 @@ const verifyUser = async (req, res, next) => {
 };
 
 app.get("/", (req, res) => {
-    res.json({ hello: "hello" });
+    res.json({ hello: "smart phone warehouse" });
 });
 
 app.get("/my-inventories", verifyUser, async (req, res) => {
